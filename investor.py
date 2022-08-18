@@ -10,20 +10,15 @@ from strategy import Strategy
 class Investor(Strategy,Portfolio):
     def __init__(self, assets, balance=1000, min_share = 1, deposit_amount = 300, fractional_shares = 0,
                     ):
-        self.fractional_shares = fractional_shares
-
         Strategy.__init__(self,assets)
         self.populate_indicators(self.dataframe)        
-        self.dataframe = self.dataframe.dropna()
-
-        self.entry_long_conditions(self.dataframe)
-        self.exit_long_conditions(self.dataframe)
-
 
         Portfolio.__init__(self,self.dataframe, balance, deposit_amount)
+        self.df_length = len(self.dataframe)       
+
+        self.fractional_shares = fractional_shares
         self.min_share = min_share
 
-        self.df_length = len(self.dataframe)
         
         #STATS
 
@@ -74,22 +69,27 @@ class Investor(Strategy,Portfolio):
 
 
     def run_strat(self, type='strat'):
+
         if type == 'strat':
-            self.wallet = np.zeros(self.df_length)
-            self.update_wallet(0,self.balance)
-            self.position = np.zeros(self.df_length)
 
-            self.date_month = self.dataframe.index.month[0]
-            self.date_year = self.dataframe.index.year[0]
-            
-            self.equity = np.zeros(self.df_length)
-
+            self.entry_long_conditions(self.dataframe)
+            self.exit_long_conditions(self.dataframe)
 
             self.price = self.dataframe['Adj Close'].to_numpy()
             self.trigger = self.dataframe['entry_long'].to_numpy() + self.dataframe['exit_long'].to_numpy()
 
         elif 'bench_' in type:
-            self.run_benchmark(type)
+            self.benchmark(type)
+
+        self.price = self.dataframe['Adj Close'].to_numpy()
+        self.wallet = np.zeros(self.df_length)
+        self.update_wallet(0,self.balance)
+        self.position = np.zeros(self.df_length)
+
+        self.date_month = self.dataframe.index.month[0]
+        self.date_year = self.dataframe.index.year[0]
+            
+        self.invested_equity = np.zeros(self.df_length)
 
         for i in range(self.df_length):
                 self.next(i)

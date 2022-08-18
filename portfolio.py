@@ -18,7 +18,7 @@ class Portfolio():
         self.wallet[day] += value
 
     def update_equity(self,day,value):
-        self.equity[day] += value      
+        self.invested_equity[day] += value      
 
     def update_position(self,day,value):
         self.position[day]  += value     
@@ -26,7 +26,7 @@ class Portfolio():
 
 
     def recalculate_equity(self,day):
-        self.equity[day] = self.position[day] * self.price[day]
+        self.invested_equity[day] = self.position[day] * self.price[day]
 
 
 

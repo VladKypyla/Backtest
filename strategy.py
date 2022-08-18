@@ -17,7 +17,7 @@ class Strategy():
 
 
             #Conditions Here
-            (dataframe['Close'] < 50) 
+            (dataframe['Close'] > 250) 
 
 
         ,1,0)
@@ -27,8 +27,29 @@ class Strategy():
 
 
             #Conditions Here
-            (dataframe['Close'] > 200) &
-            (dataframe['Close'] < 201)
+            (dataframe['Close'] > 300) &
+            (dataframe['Close'] < 301)
 
 
         ,-1,0)
+
+
+
+
+        
+
+    def benchmark(self,type):
+        self.df_length = len(self.dataframe)
+        #####LUMP SUM
+        if type == 'bench_lump':
+            self.trigger = np.zeros(self.df_length)
+            self.trigger[0] = 1
+            self.dataframe['trigger'] = self.trigger
+
+        elif type == 'bench_min_dca':
+            pass
+
+        elif type == 'bench_random_entry':
+            self.trigger = np.zeros(self.df_length)
+            for i in range(self.df_length):
+                self.trigger[i] = np.random.choice([0,0,0,0,0,0,0,0,0,1]) #1/9 days
