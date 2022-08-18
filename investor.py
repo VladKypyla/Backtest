@@ -72,10 +72,6 @@ class Investor(Strategy,Portfolio):
         self.recalculate_equity(day)
         #run stats on day? run stats after strat finish?
 
-    def benchmarks(self,type = 'lump_sum'):
-        if type == 'lump_sum':
-            pass
-
 
     def run_strat(self, type='strat'):
         if type == 'strat':
@@ -102,16 +98,7 @@ class Investor(Strategy,Portfolio):
         #Append results to pd dataframe
 
 
-    def run_benchmark(self,type):
 
-        #####LUMP SUM
-        if type == 'bench_lump':
-            self.trigger = np.zeros(self.df_length)
-            self.trigger[0] = 1
-            self.dataframe['trigger'] = self.trigger
-
-        elif type == 'bench_min_dca':
-            pass
 
         
 
