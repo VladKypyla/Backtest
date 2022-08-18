@@ -13,20 +13,17 @@ class Strategy():
         return None
 
     def entry_long_conditions(self,dataframe):
-        dataframe['trigger'] = np.where(
+        dataframe['entry_long'] = np.where(
 
 
             #Conditions Here
-            (dataframe['Close'] > 46) &
-            (dataframe['Close'] < 47) 
+            (dataframe['Close'] < 50) 
 
 
         ,1,0)
 
-        return None
-
     def exit_long_conditions(self,dataframe):
-        dataframe['trigger'] = np.where(
+        dataframe['exit_long'] = np.where(
 
 
             #Conditions Here
@@ -35,6 +32,3 @@ class Strategy():
 
 
         ,-1,0)
-
-        return None
-

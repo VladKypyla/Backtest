@@ -13,9 +13,12 @@ class Investor(Strategy,Portfolio):
         self.fractional_shares = fractional_shares
 
         Strategy.__init__(self,assets)
-        self.populate_indicators(self.dataframe)
-        self.entry_long_conditions(self.dataframe)
+        self.populate_indicators(self.dataframe)        
         self.dataframe = self.dataframe.dropna()
+
+        self.entry_long_conditions(self.dataframe)
+        self.exit_long_conditions(self.dataframe)
+
 
         Portfolio.__init__(self,self.dataframe, balance, deposit_amount)
         self.min_share = min_share
@@ -37,10 +40,7 @@ class Investor(Strategy,Portfolio):
         self.update_wallet(day, -shares*self.price[day])
 
     def sell(self,day):
-        if self.fractional_shares == 1:
-            shares = self.wallet[day]/self.price[day]
-        else:
-            shares = int(self.wallet[day]/self.price[day])
+        shares = self.position[day]
         
         self.update_position(day,-shares)
         self.update_wallet(day, shares*self.price[day])
@@ -90,7 +90,7 @@ class Investor(Strategy,Portfolio):
 
 
             self.price = self.dataframe['Adj Close'].to_numpy()
-            self.trigger = self.dataframe['enter_long'].to_numpy()
+            self.trigger = self.dataframe['entry_long'].to_numpy() + self.dataframe['exit_long'].to_numpy()
 
         elif 'bench_' in type:
             self.run_benchmark(type)
@@ -106,9 +106,9 @@ class Investor(Strategy,Portfolio):
 
         #####LUMP SUM
         if type == 'bench_lump':
-            self.enter_long = np.zeros(self.df_length)
-            self.enter_long[0] = 1
-            self.dataframe['enter_long'] = self.enter_long
+            self.trigger = np.zeros(self.df_length)
+            self.trigger[0] = 1
+            self.dataframe['trigger'] = self.trigger
 
         elif type == 'bench_min_dca':
             pass
