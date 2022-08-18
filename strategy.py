@@ -13,7 +13,7 @@ class Strategy():
         return None
 
     def entry_long_conditions(self,dataframe):
-        dataframe['enter_long'] = np.where(
+        dataframe['trigger'] = np.where(
 
 
             #Conditions Here
@@ -25,13 +25,16 @@ class Strategy():
 
         return None
 
+    def exit_long_conditions(self,dataframe):
+        dataframe['trigger'] = np.where(
 
 
-    def entry_long_condition(self,day):
-        if (
-            
-            #add stuff
+            #Conditions Here
+            (dataframe['Close'] > 200) &
+            (dataframe['Close'] < 201)
 
 
-        ):  self.enter_long[day] = 1
-        else: self.enter_long[day] = 0
+        ,-1,0)
+
+        return None
+

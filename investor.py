@@ -37,7 +37,13 @@ class Investor(Strategy,Portfolio):
         self.update_wallet(day, -shares*self.price[day])
 
     def sell(self,day):
-        pass
+        if self.fractional_shares == 1:
+            shares = self.wallet[day]/self.price[day]
+        else:
+            shares = int(self.wallet[day]/self.price[day])
+        
+        self.update_position(day,-shares)
+        self.update_wallet(day, shares*self.price[day])
 
 
     
@@ -60,7 +66,7 @@ class Investor(Strategy,Portfolio):
                 self.buy(day)
 
         elif self.trigger[day] == -1:
-            #SELL CODE
+            self.sell(day)
             pass
 
         self.recalculate_equity(day)
