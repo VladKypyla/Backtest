@@ -24,3 +24,14 @@ class Strategy():
         ,1,0)
 
         return None
+
+
+
+    def entry_long_condition(self,day):
+        if (
+            
+
+
+
+        ):  self.enter_long[day] = 1
+        else: self.enter_long[day] = 0
