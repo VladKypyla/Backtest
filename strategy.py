@@ -30,7 +30,7 @@ class Strategy():
     def entry_long_condition(self,day):
         if (
             
-
+            #add stuff
 
 
         ):  self.enter_long[day] = 1
