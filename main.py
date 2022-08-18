@@ -17,6 +17,8 @@ assets  = yf.download(ticker, start, end)
 
 inv = Investor(assets,balance=1000, deposit_amount=100)
 inv.run_strat()
+
+#Should be inside library
 inv.dataframe['position'] = inv.position
 inv.dataframe['wallet'] = inv.wallet
 inv.dataframe['equity'] = inv.equity

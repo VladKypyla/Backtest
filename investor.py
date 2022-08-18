@@ -26,15 +26,6 @@ class Investor(Strategy,Portfolio):
 
         
 
-        #####ONLY INVEST DAY 1
-        self.enter_long = np.zeros(self.df_length)
-        self.enter_long[0] = 1
-        self.dataframe['enter_long'] = self.enter_long
-        #####
-
-
-
-
 
     def buy(self,day):
         if self.fractional_shares == 1:
@@ -67,37 +58,55 @@ class Investor(Strategy,Portfolio):
         if self.trigger[day] == 1:
             if int(self.wallet[day]/self.price[day]) >= self.min_share:
                 self.buy(day)
+
         elif self.trigger[day] == -1:
             #SELL CODE
             pass
 
         self.recalculate_equity(day)
-        #self.get_stats(day)
+        #run stats on day? run stats after strat finish?
 
     def benchmarks(self,type = 'lump_sum'):
         if type == 'lump_sum':
             pass
 
 
-    def run_strat(self):
-        self.wallet = np.zeros(self.df_length)
-        self.update_wallet(0,self.balance)
-        self.position = np.zeros(self.df_length)
+    def run_strat(self, type='strat'):
+        if type == 'strat':
+            self.wallet = np.zeros(self.df_length)
+            self.update_wallet(0,self.balance)
+            self.position = np.zeros(self.df_length)
 
-        self.date_month = self.dataframe.index.month[0]
-        self.date_year = self.dataframe.index.year[0]
-        
-        self.equity = np.zeros(self.df_length)
+            self.date_month = self.dataframe.index.month[0]
+            self.date_year = self.dataframe.index.year[0]
+            
+            self.equity = np.zeros(self.df_length)
 
 
-        self.price = self.dataframe['Adj Close'].to_numpy()
-        self.trigger = self.dataframe['enter_long'].to_numpy()
+            self.price = self.dataframe['Adj Close'].to_numpy()
+            self.trigger = self.dataframe['enter_long'].to_numpy()
+
+        elif 'bench_' in type:
+            self.run_benchmark(type)
 
         for i in range(self.df_length):
-            self.next(i)
+                self.next(i)
 
-    def run_benchmarks(self):
-        pass
+        #Run stats on strat
+        #Append results to pd dataframe
+
+
+    def run_benchmark(self,type):
+
+        #####LUMP SUM
+        if type == 'bench_lump':
+            self.enter_long = np.zeros(self.df_length)
+            self.enter_long[0] = 1
+            self.dataframe['enter_long'] = self.enter_long
+
+        elif type == 'bench_min_dca':
+            pass
+
         
 
         
