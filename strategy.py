@@ -1,35 +1,38 @@
+from dataclasses import dataclass
 import numpy as np
-import datetime as dt
+import datetime as dtClose
 import yfinance as yf
+from indicators import *
+from benchmarks import Benchmarks
 
-class Strategy():
-    def __init__(self,assets):
-        self.dataframe = assets
-    
-    def populate_indicators(self,dataframe):
+class Strategy(Benchmarks):
+
+
+    def populate_indicators(self):
         #Indicators
-        #dataframe['mean']= dataframe['Adj Close'].rolling(200).mean()
+        self.dataframe['rsi'] = rsi(self.dataframe['Close'])
+
 
         return None
 
-    def entry_long_conditions(self,dataframe):
-        dataframe['entry_long'] = np.where(
+    def entry_long_conditions(self):
+        self.dataframe['entry_long'] = np.where(
 
 
             #Conditions Here
-            (dataframe['Close'] > 250) 
+            (crossed_above(self.dataframe['rsi'], 70))
+
+
+            
 
 
         ,1,0)
 
-    def exit_long_conditions(self,dataframe):
-        dataframe['exit_long'] = np.where(
 
+    def exit_long_conditions(self):
+        self.dataframe['exit_long'] = np.where(
 
-            #Conditions Here
-            (dataframe['Close'] > 300) &
-            (dataframe['Close'] < 301)
-
+            (crossed_below(self.dataframe['rsi'], 30))
 
         ,-1,0)
 
@@ -38,18 +41,4 @@ class Strategy():
 
         
 
-    def benchmark(self,type):
-        self.df_length = len(self.dataframe)
-        #####LUMP SUM
-        if type == 'bench_lump':
-            self.trigger = np.zeros(self.df_length)
-            self.trigger[0] = 1
-            self.dataframe['trigger'] = self.trigger
 
-        elif type == 'bench_min_dca':
-            pass
-
-        elif type == 'bench_random_entry':
-            self.trigger = np.zeros(self.df_length)
-            for i in range(self.df_length):
-                self.trigger[i] = np.random.choice([0,0,0,0,0,0,0,0,0,1]) #1/9 days
