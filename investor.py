@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
+import pandas as pd
 import datetime as dt
 import yfinance as yf
 
@@ -10,17 +11,36 @@ from strategy import Strategy
 class Investor(Strategy,Portfolio):
     def __init__(self, assets, balance=1000, min_share = 1, deposit_amount = 300, fractional_shares = 0,
                     ):
-        Strategy.__init__(self,assets)
-        self.populate_indicators(self.dataframe)        
 
-        Portfolio.__init__(self,self.dataframe, balance, deposit_amount)
-        self.df_length = len(self.dataframe)       
+        self.dataframe = assets
+        self.balance = balance
+        self.deposit_amount = deposit_amount
 
         self.fractional_shares = fractional_shares
         self.min_share = min_share
 
+        Strategy.__init__(self)
+        self.populate_indicators()  
+        self.entry_long_conditions()
+        self.exit_long_conditions()
+        #self.dataframe['entry_long'] = self.dataframe['entry_long'].shift()
+        self.dataframe = self.dataframe.dropna()
+        self.trigger = self.dataframe['entry_long'].to_numpy() + self.dataframe['exit_long'].to_numpy()
+        self.df_length = len(self.dataframe) 
+        
+
+        Portfolio.__init__(self)
+        
+
+     
+
+
+        self.price = self.dataframe['Adj Close'].to_numpy()
+
         
         #STATS
+
+        self.results = np.empty(0)
 
         
 
@@ -39,9 +59,7 @@ class Investor(Strategy,Portfolio):
         
         self.update_position(day,-shares)
         self.update_wallet(day, shares*self.price[day])
-
-
-    
+  
 
     def next(self,day):
 
@@ -62,26 +80,14 @@ class Investor(Strategy,Portfolio):
 
         elif self.trigger[day] == -1:
             self.sell(day)
-            pass
 
         self.recalculate_equity(day)
         #run stats on day? run stats after strat finish?
 
 
-    def run_strat(self, type='strat'):
+    def run_strat(self, name = 'Strategy'):
+        
 
-        if type == 'strat':
-
-            self.entry_long_conditions(self.dataframe)
-            self.exit_long_conditions(self.dataframe)
-
-            self.price = self.dataframe['Adj Close'].to_numpy()
-            self.trigger = self.dataframe['entry_long'].to_numpy() + self.dataframe['exit_long'].to_numpy()
-
-        elif 'bench_' in type:
-            self.benchmark(type)
-
-        self.price = self.dataframe['Adj Close'].to_numpy()
         self.wallet = np.zeros(self.df_length)
         self.update_wallet(0,self.balance)
         self.position = np.zeros(self.df_length)
@@ -93,6 +99,10 @@ class Investor(Strategy,Portfolio):
 
         for i in range(self.df_length):
                 self.next(i)
+        self.results = np.append(self.results, [[name],self.wallet,self.invested_equity])
+
+        
+
 
         #Run stats on strat
         #Append results to pd dataframe

@@ -1,19 +1,10 @@
 import numpy as np
 import datetime as dt
 import yfinance as yf
+import matplotlib.pyplot as plt
 
 class Portfolio():
-    def __init__(self,dataframe, balance, deposit_amount):
-        self.dataframe = dataframe
-        self.balance = balance
-        self.deposit_amount = deposit_amount
-
-
-
-
-
-
-
+    
     def update_wallet(self,day,value):
         self.wallet[day] += value
 
@@ -33,8 +24,12 @@ class Portfolio():
 
 
 
-    def visualize_risk(self):
-        pass
+    def visualize(self):
+        for i in range(0,len(self.results),3):
+            print(self.results[i])
+            plt.plot(self.results[i+2] + self.results[i+1] )
+        plt.show()
+            
 
     def visualize_reward(self):
         pass
